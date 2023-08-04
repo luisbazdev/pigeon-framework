@@ -16,5 +16,9 @@
   "license": "ISC",
   "devDependencies": {
     "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "pigeon-core": "^1.0.0"
   }
 }
