@@ -1,56 +1,49 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { AuthType, HTTPBasicSettings, JWTSettings, Pigeon } from "pigeon-core";
+import { Pigeon, HTTPBasicSettings, JWTSettings } from "pigeon-core";
 
-const auth: AuthType | string | undefined = process.env["pigeon.auth.type"];
+Pigeon.auth("none");
 
-switch (auth) {
-  case "basic": {
-    const basicAuthSettings: HTTPBasicSettings = {
-      user: <string>process.env["pigeon.auth.basic.user"],
-      password: <string>process.env["pigeon.auth.basic.password"],
-    };
-    Pigeon.auth(auth, basicAuthSettings);
-    break;
-  }
-  case "jwt": {
-    const jwtAuthSettings: JWTSettings = {
-      privateKey: <string>process.env["pigeon.auth.jwt.privatekey"],
-      routes: {
-        enabled: <string>process.env["pigeon.auth.jwt.routes.enabled"],
-        login: <string>process.env["pigeon.auth.jwt.routes.login"],
-        signup: <string>process.env["pigeon.auth.jwt.routes.signup"],
-        logout: <string>process.env["pigeon.auth.jwt.routes.logout"],
-      },
-    };
-    Pigeon.auth(auth, jwtAuthSettings);
-    break;
-  }
-  default:
-    break;
-}
+/*
+Pigeon.auth("jwt", <JWTSettings>{
+    privateKey: <string>process.env["pigeon.auth.jwt.privatekey"],
+    routes: {
+      enabled: <string>process.env["pigeon.auth.jwt.routes.enabled"],
+      login: <string>process.env["pigeon.auth.jwt.routes.login"],
+      signup: <string>process.env["pigeon.auth.jwt.routes.signup"],
+      logout: <string>process.env["pigeon.auth.jwt.routes.logout"],
+    },
+});
+*/
 
-const mysqlEnabled: string | undefined = process.env["pigeon.db.mysql.enabled"];
-if (mysqlEnabled === "true")
-  Pigeon.database("mysql", {
-    host: <string>process.env["pigeon.db.mysql.host"],
-    user: <string>process.env["pigeon.db.mysql.user"],
-    password: <string>process.env["pigeon.db.mysql.password"],
-    database: <string>process.env["pigeon.db.mysql.database"],
-    port: <string>process.env["pigeon.db.mysql.port"],
-  });
+/*
+Pigeon.auth("basic", <HTTPBasicSettings>{
+  user: <string>process.env["pigeon.auth.basic.user"],
+  password: <string>process.env["pigeon.auth.basic.password"],
+})
+*/
 
-const mongodbEnabled: string | undefined =
-  process.env["pigeon.db.mongodb.enabled"];
-if (mongodbEnabled === "true")
-  Pigeon.database("mongodb", {
-    url: <string>process.env["pigeon.db.mongodb.url"],
-    db: <string>process.env["pigeon.db.mongodb.db"],
-    collection: <string>process.env["pigeon.db.mongodb.collection"],
-  });
+/*
+Pigeon.database("mysql", {
+  enabled: "true",
+  host: <string>process.env["pigeon.db.mysql.host"],
+  user: <string>process.env["pigeon.db.mysql.user"],
+  password: <string>process.env["pigeon.db.mysql.password"],
+  database: <string>process.env["pigeon.db.mysql.database"],
+  port: <string>process.env["pigeon.db.mysql.port"],
+});
+*/
 
-const port: string | undefined = process.env["pigeon.port"];
-if (port) Pigeon.port(port);
+/*
+Pigeon.database("mongodb", {
+  enabled: "true",
+  url: <string>process.env["pigeon.db.mongodb.url"],
+  db: <string>process.env["pigeon.db.mongodb.db"],
+  collection: <string>process.env["pigeon.db.mongodb.collection"],
+});
+*/
+
+Pigeon.port(process.env["pigeon.port"] || "2020");
 
 Pigeon.start();
