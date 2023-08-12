@@ -6,7 +6,7 @@
   "scripts": {
     "migrate": "npx migrate up",
     "build": "rimraf build && npx tsc",
-    "pigeon:build": "npm --prefix ./node_modules/pigeon-core_demo run build",
+    "pigeon:build": "npm --prefix ./node_modules/pigeon-core run build",
     "prestart": "npm run migrate && npm run build",
     "start": "npm run pigeon:build && node build/index.js",
     "create": "plop"
