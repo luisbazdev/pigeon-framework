@@ -5,49 +5,92 @@ import { MySQL } from "pigeon-core";
 import { MongoDB } from "pigeon-core";
 {{/if}}
 /**
- * This is a generated repository for a {{name}} object,
- * you can define all your logic in the repository below.
+ * Repository for {{name}} objects.
+ * @type {IRepository}
+ *
+ * Please check https://github.com/luisbazdev/pigeon-framework 
+ * for more understanding :)
  */
 export const {{name}}Repository: IRepository = {
 {{#if (eq database "mysql")}}
-  create: async function({{name}}) {
-    const [result] = await MySQL.query("INSERT INTO {{name}}s SET ?", user);
+  /**
+   * Creates a new {{name}} object.
+   * @param {any} audio - The {{name}} object to be created.
+   */
+  create: async function({{name}}: any) {
+    const [result] = await MySQL.query("INSERT INTO {{name}}s SET ?", {{name}});
     return result.insertId;
   },
-  findById: async function(id) {
+  /**
+   * Finds an {{name}} object by its ID.
+   * @param {number} id - The ID of the audio object.
+   */
+  findById: async function(id: any) {
     const [rows, fields] = await MySQL.query("SELECT * FROM {{name}}s WHERE id=?", [id]);
     return rows[0];
   },
+  /**
+   * Finds all {{name}} objects.
+   */
   findAll: async function () {
     const [rows, fields] = await MySQL.query("SELECT * FROM {{name}}s");
     return rows;
   },
-  update: async function(id, {{name}}) {
-    const [result] = await MySQL.query("UPDATE {{name}}s SET ? WHERE id=?", [user, id]);
+  /**
+   * Updates an {{name}} object.
+   * @param {number} id - The ID of the {{name}} object to be updated.
+   * @param {any} {{name}} - The updated {{name}} object.
+   */
+  update: async function(id: any, {{name}}: any) {
+    const [result] = await MySQL.query("UPDATE {{name}}s SET ? WHERE id=?", [{{name}}, id]);
     return result.affectedRows > 0;
   },
-  delete: async function(id) {
+  /**
+   * Deletes an {{name}} object by its ID.
+   * @param {number} id - The ID of the {{name}} object to be deleted.
+   */
+  delete: async function(id: any) {
     const [result] = await MySQL.query("DELETE FROM {{name}}s WHERE id=?", [id]);
     return result.affectedRows > 0;
   },
 {{else}}
-  create: async function(user) {
-    const result = await MongoDB.insertOne(user);
+  /**
+   * Creates a new {{name}} object.
+   * @param {any} {{name}} - The {{name}} object to be created.
+   */
+  create: async function({{name}}: any) {
+    const result = await MongoDB.insertOne({{name}});
     return result.insertedId;
   },
-  findById: async function(id) {
+  /**
+   * Finds an {{name}} object by its ID.
+   * @param {number} id - The ID of the {{name}} object.
+   */
+  findById: async function(id: any) {
     const result = await MongoDB.findOne({ _id: id });
     return result;
   },
+  /**
+   * Finds all {{name}} objects.
+   */
   findAll: async function () {
     const result = await MongoDB.find({}).toArray();
     return result;
   },
-  update: async function(id, user) {
-    const result = await MongoDB.updateOne({ _id: id }, { $set: user });
+  /**
+   * Updates an {{name}} object.
+   * @param {number} id - The ID of the {{name}} object to be updated.
+   * @param {any} {{name}} - The updated {{name}} object.
+   */
+  update: async function(id: any, {{name}}: any) {
+    const result = await MongoDB.updateOne({ _id: id }, { $set: {{name}} });
     return result.modifiedCount > 0;
   },
-  delete: async function(id) {
+  /**
+   * Deletes an {{name}} object by its ID.
+   * @param {number} id - The ID of the {{name}} object to be deleted.
+   */
+  delete: async function(id: any) {
     const result = await MongoDB.deleteOne({ _id: id });
     return result.deletedCount > 0;
   },

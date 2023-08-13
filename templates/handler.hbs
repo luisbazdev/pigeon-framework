@@ -1,14 +1,21 @@
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Pigeon } from "pigeon-core"
 /**
- * This is a generated handler for "/api/{{name}}s" route,
- * all request to such will be handled by the handler below.
+ * This handler will catch all requests to "/api/{{name}}s/*"
+ * please check https://github.com/luisbazdev/pigeon-framework 
+ * for more understanding :)
  */
 const {{name}}Handler = Pigeon.createHandler("/{{name}}s");
 
 {{#each methods}}
+/**
+ * {{this}} method handler for "/api/{{../name}}s" route.
+ * @param {IncomingMessage} request - The incoming request object.
+ * @param {ServerResponse} response - The server response object.
+ */
 {{../name}}Handler.{{this}}("/", async (request: IncomingMessage, response: ServerResponse) => {
   // ...
   response.end()
 });
+
 {{/each}}

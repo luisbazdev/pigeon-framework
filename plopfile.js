@@ -8,24 +8,13 @@ module.exports = function (plop) {
     return a === b;
   });
   plop.setGenerator("handler", {
-    description: "Generate a new handler file",
+    description: "Generate a new handler for an object",
     prompts: [
       {
         type: "input",
         name: "name",
-        message: "What is the root path of your new handler?",
-      },
-      {
-        type: "checkbox",
-        name: "methods",
-        message: "Which HTTP methods should the handler support?",
-        choices: [
-          { name: "GET" },
-          { name: "POST" },
-          { name: "PUT" },
-          { name: "DELETE" },
-        ],
-      },
+        message: "Type an object for this handler (in singular form):",
+      }
     ],
     actions: [
       {
@@ -35,18 +24,19 @@ module.exports = function (plop) {
         data: {
           name: "{{name}}",
           route: "{{route}}",
+          methods: ["GET", "POST", "PUT", "DELETE"]
         },
       },
     ],
   });
 
   plop.setGenerator("middleware", {
-    description: "Generate a new middleware file",
+    description: "Generate a new custom middleware function",
     prompts: [
       {
         type: "input",
         name: "name",
-        message: "Name of the middleware",
+        message: "Type a name for your middleware function ('Middleware' will be appended to the name you provide):",
       },
     ],
     actions: [
@@ -59,17 +49,17 @@ module.exports = function (plop) {
   });
 
   plop.setGenerator("repository", {
-    description: "Generate a new repository file",
+    description: "Generate a new repository for an object",
     prompts: [
       {
         type: "input",
         name: "name",
-        message: "Name of the repository",
+        message: "Type an object for your repository (in singular form):",
       },
       {
         type: "list",
         name: "database",
-        message: "Which database should the repository use?",
+        message: "Select a database for the repository:",
         choices: [
           { name: "MySQL", value: "mysql" },
           { name: "MongoDB", value: "mongodb" },

@@ -1,8 +1,14 @@
 import { IncomingMessage, ServerResponse } from "node:http";
 import { IMiddlewareFunction } from "pigeon-core";
+
 /**
- * This is a generated custom middleware function, it needs to
- * call the next function at the end for it to work correctly.
+ * Custom middleware function {{name}}Middleware.
+ * @param {IncomingMessage} req - The incoming request object.
+ * @param {ServerResponse} res - The server response object.
+ * @param {Function} next - The next function to be called.
+ *
+ * Please check https://github.com/luisbazdev/pigeon-framework 
+ * for more understanding :)
  */
 export const {{name}}Middleware: IMiddlewareFunction = function (
   req: IncomingMessage,
