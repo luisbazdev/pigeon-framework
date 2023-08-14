@@ -42,7 +42,6 @@ Pigeon.auth("none");
 // })
 
 // Pigeon.database("mysql", {
-//   enabled: "true",
 //   host: <string>process.env["pigeon.db.mysql.host"],
 //   user: <string>process.env["pigeon.db.mysql.user"],
 //   password: <string>process.env["pigeon.db.mysql.password"],
@@ -51,7 +50,6 @@ Pigeon.auth("none");
 // });
 
 // Pigeon.database("mongodb", {
-//   enabled: "true",
 //   url: <string>process.env["pigeon.db.mongodb.url"],
 //   db: <string>process.env["pigeon.db.mongodb.db"],
 //   collection: <string>process.env["pigeon.db.mongodb.collection"],
@@ -129,7 +127,7 @@ All subsequent requests to `/api/handler-path` will be caught by this handler.
 
 The handler object contains a few methods which you can use to catch requests that contain specific routes and specific HTTP methods, those methods are `GET`, `POST`, `PUT` and `DELETE`.
 
-Each one of these methods need the programmer to provide a path and, callback function to be executed when the request hits and an optional array of middleware functions.
+Each one of these methods need the programmer to provide a path, a callback function to be executed when the request hits and an optional array of middleware functions.
 
 ## Middleware
 
@@ -179,7 +177,7 @@ testHandler.GET("/", async (request: IncomingMessage, response: ServerResponse) 
 ...
 ```
 
-At some point of the execution of a middleware function it must terminate and pass control to the next middleware function in the **middleware cycle**, which is done by calling `next()` function, if the programmer does not call `next()` the request will be left hanging because the rest of the middlewares will not be executed (remember the actual callback that will intercept the request is also a middleware).
+At some point of the execution of a middleware function it must terminate and pass control to the next middleware function in the **middleware cycle**, which is done by calling `next()` function, if the programmer does not call `next()` the request will be left hanging because the rest of the middlewares will not be executed (remember the actual callback that will intercept the request is also treated as a middleware).
 
 All functions that will be executed after an HTTP request hits the server are treated as `middlewares` (including the actual callback of a handler route), the order of middleware execution goes as: `general middleware`, `handler middleware`, `route middleware` and `callback functions`.
 
@@ -201,16 +199,15 @@ These are the actual functions you provided for any specific route in your handl
 
 ## Authentication
 
-Pigeon currently support two different methods of authentication which are `HTTP Basic Authentication` and `JWT Authentication`, you can also decide not to use any of them.
+Pigeon currently support two different methods of authentication which are `HTTP Basic Authentication` and `JWT Authentication`, you can also decide not to use any of them (by default all authentication methods are disabled and your API is public).
 
 ### HTTP Basic Authentication
 
 [HTTP Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) type works by storing a username and password in the server which then the user will have to send in the Authorization HTTP header and be compared against the credentials you specified.
 
-To use `HTTP Basic Authentication` you need to set the authentication type to `basic` and provide a user and password in your `.env` file like this:
+To use `HTTP Basic Authentication` you need to set the authentication provide a user and password in your `.env` file like this:
 
 ```typescript
-pigeon.auth.type=basic
 pigeon.auth.basic.user=username
 pigeon.auth.basic.password=password
 ```
@@ -225,6 +222,7 @@ Pigeon.auth("basic", <HTTPBasicSettings>{
   password: <string>process.env["pigeon.auth.basic.password"],
 })
 ```
+
 ### JWT Authentication
 
 [JWT Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) type works by storing a secret key which will be used to sign and verify [JWT Tokens](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) that clients will send in the Authorization header.
@@ -233,12 +231,25 @@ In Pigeon you can also specify to use `JWT Authentication routes` which are rout
 
 Here's an example of how you can set up `JWT Authentication` in Pigeon:
 
+The programmer needs to provide a `secret` and optional `routes` for authentication purposes in your `.env` file like this:
+
+```typescript
+pigeon.auth.jwt.privatekey=secret
+pigeon.auth.jwt.routes.enabled=true
+pigeon.auth.jwt.routes.login=/login
+pigeon.auth.jwt.routes.signup=/signup
+pigeon.auth.jwt.routes.logout=/logout
+```
+
+And then set the authentication type to `jwt` like this:
+
 ```typescript
 import { Pigeon, JWTSettings } from "pigeon-core";
 
 Pigeon.auth("jwt", <JWTSettings>{
     privateKey: <string>process.env["pigeon.auth.jwt.privatekey"],
     routes: {
+      enabled: <string>process.env["pigeon.auth.jwt.routes.enabled"],
       login: <string>process.env["pigeon.auth.jwt.routes.login"],
       signup: <string>process.env["pigeon.auth.jwt.routes.signup"],
       logout: <string>process.env["pigeon.auth.jwt.routes.logout"],
@@ -258,7 +269,7 @@ Pigeon.auth("jwt", <JWTSettings>{
 
 ## Database
 
-Currently in Pigeon there are two databases available to use, which are `MySQL` and `MongoDB`.
+Currently in Pigeon there are two databases available to use, which are `MySQL` and `MongoDB` (by default all databases are disabled in your API).
 
 This is how you can enable `MySQL` and `MongoDB` databases, respectively:
 
@@ -282,4 +293,3 @@ Pigeon.database("mongodb", {
   collection: <string>process.env["pigeon.db.mongodb.collection"],
 });
 ```
-
