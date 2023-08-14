@@ -26,7 +26,6 @@ Pigeon.auth("none");
 // })
 
 // Pigeon.database("mysql", {
-//   enabled: "true",
 //   host: <string>process.env["pigeon.db.mysql.host"],
 //   user: <string>process.env["pigeon.db.mysql.user"],
 //   password: <string>process.env["pigeon.db.mysql.password"],
@@ -35,7 +34,6 @@ Pigeon.auth("none");
 // });
 
 // Pigeon.database("mongodb", {
-//   enabled: "true",
 //   url: <string>process.env["pigeon.db.mongodb.url"],
 //   db: <string>process.env["pigeon.db.mongodb.db"],
 //   collection: <string>process.env["pigeon.db.mongodb.collection"],
