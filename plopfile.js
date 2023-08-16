@@ -3,7 +3,6 @@ module.exports = function (plop) {
     handler: "src/handler/{{name}}.ts",
     middleware: "src/middleware/{{name}}Middleware.ts",
     repository: "src/repository/{{name}}.ts",
-    model: "src/model/{{name}}.ts",
   };
   plop.setHelper("eq", function (a, b) {
     return a === b;
@@ -12,7 +11,7 @@ module.exports = function (plop) {
     return text.charAt(0).toUpperCase() + text.slice(1);
   });
   plop.setGenerator("handler", {
-    description: "Generate a new handler, model and repository for an object",
+    description: "Generate a new handler and repository for an object",
     prompts: [
       {
         type: "input",
@@ -25,7 +24,6 @@ module.exports = function (plop) {
         message: "Select a database for your repository:",
         choices: [
           { name: "MySQL", value: "mysql" },
-          { name: "MongoDB", value: "mongodb" },
         ],
       },
     ],
@@ -39,11 +37,6 @@ module.exports = function (plop) {
           route: "{{route}}",
           methods: ["GET", "POST", "PUT", "DELETE"],
         },
-      },
-      {
-        type: "add",
-        path: directories.model,
-        templateFile: "templates/object.hbs",
       },
       {
         type: "add",

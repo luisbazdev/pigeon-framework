@@ -1,10 +1,7 @@
 import { IRepository } from "pigeon-core";
-{{#if (eq database "mysql")}}
-import { MySQL } from "pigeon-core";
-{{else}}
-import { MongoDB } from "pigeon-core";
-{{/if}}
-import { I{{capitalize name}} } from "../model/{{name}}";
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 /**
  * Repository for {{capitalize name}} objects.
  * @type {IRepository}
@@ -13,107 +10,69 @@ import { I{{capitalize name}} } from "../model/{{name}}";
  * for more understanding :)
  */
 export const {{capitalize name}}Repository: IRepository = {
-{{#if (eq database "mysql")}}
-  /**
-   * Creates a new {{capitalize name}} object.
-   * @param {any} {{capitalize name}} - The {{capitalize name}} object to be created.
-   */
-  create: async function({{capitalize name}}: I{{capitalize name}}) {
-    try {
-      const [result] = await MySQL.query("INSERT INTO {{capitalize name}}s SET ?", {{capitalize name}});
-      return result.insertId;
-    } catch (error) {
-      throw error;  
-    }
-  },
-  /**
-   * Finds an {{capitalize name}} object by its ID.
-   * @param {number} id - The ID of the {{capitalize name}} object.
-   */
-  findById: async function(id: string | number) {
-    try {
-      const [rows, fields] = await MySQL.query("SELECT * FROM {{capitalize name}}s WHERE id=?", [id]);
-      return rows[0];
-    } catch (error) {
-      throw error;  
-    }
-  },
-  /**
-   * Finds all {{capitalize name}} objects.
-   */
-  findAll: async function () {
-    try {
-      const [rows, fields] = await MySQL.query("SELECT * FROM {{capitalize name}}s");
-      return rows;
-    } catch (error) {
-      throw error;  
-    }
-  },
-  /**
-   * Updates an {{capitalize name}} object.
-   * @param {number} id - The ID of the {{capitalize name}} object to be updated.
-   * @param {any} {{capitalize name}} - The updated {{capitalize name}} object.
-   */
-  update: async function(id: string | number, {{capitalize name}}: I{{capitalize name}}) {
-    try {
-      const [result] = await MySQL.query("UPDATE {{capitalize name}}s SET ? WHERE id=?", [{{capitalize name}}, id]);
-      return result.affectedRows > 0;
-    } catch (error) {
-      throw error;  
-    }
-  },
-  /**
-   * Deletes an {{capitalize name}} object by its ID.
-   * @param {number} id - The ID of the {{capitalize name}} object to be deleted.
-   */
-  delete: async function(id: string | number) {
-    try {
-      const [result] = await MySQL.query("DELETE FROM {{capitalize name}}s WHERE id=?", [id]);
-      return result.affectedRows > 0;
-    } catch (error) {
-      throw error;  
-    }
-  },
-{{else}}
-  /**
-   * Creates a new {{capitalize name}} object.
-   * @param {any} {{capitalize name}} - The {{capitalize name}} object to be created.
-   */
   create: async function({{capitalize name}}: any) {
-    const result = await MongoDB.insertOne({{capitalize name}});
-    return result.insertedId;
+    try {
+      const result = await prisma.{{name}}.create({
+        data: {{capitalize name}}
+      });
+      return result;
+    } catch (error) {
+      throw error;  
+    } finally{
+      await prisma.$disconnect();
+    }
   },
-  /**
-   * Finds an {{capitalize name}} object by its ID.
-   * @param {number} id - The ID of the {{capitalize name}} object.
-   */
-  findById: async function(id: any) {
-    const result = await MongoDB.findOne({ _id: id });
-    return result;
+  findById: async function(id: number) {
+    try {
+      const result = await prisma.{{name}}.findUnique({
+        where: {
+          id,
+        },
+      });
+      return result
+    } catch (error) {
+      throw error;  
+    } finally{
+      await prisma.$disconnect();
+    }
   },
-  /**
-   * Finds all {{capitalize name}} objects.
-   */
   findAll: async function () {
-    const result = await MongoDB.find({}).toArray();
-    return result;
+    try {
+      const result = await prisma.{{name}}.findMany();
+      return result
+    } catch (error) {
+      throw error;  
+    } finally{
+      await prisma.$disconnect();
+    }
   },
-  /**
-   * Updates an {{capitalize name}} object.
-   * @param {number} id - The ID of the {{capitalize name}} object to be updated.
-   * @param {any} {{capitalize name}} - The updated {{capitalize name}} object.
-   */
-  update: async function(id: any, {{capitalize name}}: any) {
-    const result = await MongoDB.updateOne({ _id: id }, { $set: {{capitalize name}} });
-    return result.modifiedCount > 0;
+  update: async function(id: number, {{capitalize name}}: any) {
+    try {
+      const {{name}} = await prisma.{{name}}.update({
+        data: {{capitalize name}},
+        where: {
+          id,
+        },
+      })
+      return {{name}};
+    } catch (error) {
+      throw error;  
+    } finally{
+      await prisma.$disconnect();
+    }
   },
-  /**
-   * Deletes an {{capitalize name}} object by its ID.
-   * @param {number} id - The ID of the {{capitalize name}} object to be deleted.
-   */
-  delete: async function(id: any) {
-    const result = await MongoDB.deleteOne({ _id: id });
-    return result.deletedCount > 0;
+  delete: async function(id: number) {
+    try {
+      const {{name}} = await prisma.{{name}}.delete({
+        where: {
+          id,
+        },
+      })
+      return {{name}};
+    } catch (error) {
+      throw error;  
+    } finally{
+      await prisma.$disconnect();
+    }
   },
-{{/if}}
 };
