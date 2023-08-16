@@ -8,6 +8,7 @@ async function createMySQLConnection(useDatabase) {
     host: process.env["pigeon.db.mysql.host"],
     user: process.env["pigeon.db.mysql.user"],
     password: process.env["pigeon.db.mysql.password"],
+    port: process.env["pigeon.db.mysql.port"] ?? 3306,
   };
   if (useDatabase) settings.database = process.env["pigeon.db.mysql.database"];
   return await mysql.createConnection(settings);
