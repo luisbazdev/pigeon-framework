@@ -4,91 +4,112 @@ import { MySQL } from "pigeon-core";
 {{else}}
 import { MongoDB } from "pigeon-core";
 {{/if}}
+import { I{{capitalize name}} } from "../model/{{name}}";
 /**
- * Repository for {{name}} objects.
+ * Repository for {{capitalize name}} objects.
  * @type {IRepository}
  *
  * Please check https://github.com/luisbazdev/pigeon-framework 
  * for more understanding :)
  */
-export const {{name}}Repository: IRepository = {
+export const {{capitalize name}}Repository: IRepository = {
 {{#if (eq database "mysql")}}
   /**
-   * Creates a new {{name}} object.
-   * @param {any} audio - The {{name}} object to be created.
+   * Creates a new {{capitalize name}} object.
+   * @param {any} {{capitalize name}} - The {{capitalize name}} object to be created.
    */
-  create: async function({{name}}: any) {
-    const [result] = await MySQL.query("INSERT INTO {{name}}s SET ?", {{name}});
-    return result.insertId;
+  create: async function({{capitalize name}}: I{{capitalize name}}) {
+    try {
+      const [result] = await MySQL.query("INSERT INTO {{capitalize name}}s SET ?", {{capitalize name}});
+      return result.insertId;
+    } catch (error) {
+      throw error;  
+    }
   },
   /**
-   * Finds an {{name}} object by its ID.
-   * @param {number} id - The ID of the audio object.
+   * Finds an {{capitalize name}} object by its ID.
+   * @param {number} id - The ID of the {{capitalize name}} object.
    */
-  findById: async function(id: any) {
-    const [rows, fields] = await MySQL.query("SELECT * FROM {{name}}s WHERE id=?", [id]);
-    return rows[0];
+  findById: async function(id: string | number) {
+    try {
+      const [rows, fields] = await MySQL.query("SELECT * FROM {{capitalize name}}s WHERE id=?", [id]);
+      return rows[0];
+    } catch (error) {
+      throw error;  
+    }
   },
   /**
-   * Finds all {{name}} objects.
+   * Finds all {{capitalize name}} objects.
    */
   findAll: async function () {
-    const [rows, fields] = await MySQL.query("SELECT * FROM {{name}}s");
-    return rows;
+    try {
+      const [rows, fields] = await MySQL.query("SELECT * FROM {{capitalize name}}s");
+      return rows;
+    } catch (error) {
+      throw error;  
+    }
   },
   /**
-   * Updates an {{name}} object.
-   * @param {number} id - The ID of the {{name}} object to be updated.
-   * @param {any} {{name}} - The updated {{name}} object.
+   * Updates an {{capitalize name}} object.
+   * @param {number} id - The ID of the {{capitalize name}} object to be updated.
+   * @param {any} {{capitalize name}} - The updated {{capitalize name}} object.
    */
-  update: async function(id: any, {{name}}: any) {
-    const [result] = await MySQL.query("UPDATE {{name}}s SET ? WHERE id=?", [{{name}}, id]);
-    return result.affectedRows > 0;
+  update: async function(id: string | number, {{capitalize name}}: I{{capitalize name}}) {
+    try {
+      const [result] = await MySQL.query("UPDATE {{capitalize name}}s SET ? WHERE id=?", [{{capitalize name}}, id]);
+      return result.affectedRows > 0;
+    } catch (error) {
+      throw error;  
+    }
   },
   /**
-   * Deletes an {{name}} object by its ID.
-   * @param {number} id - The ID of the {{name}} object to be deleted.
+   * Deletes an {{capitalize name}} object by its ID.
+   * @param {number} id - The ID of the {{capitalize name}} object to be deleted.
    */
-  delete: async function(id: any) {
-    const [result] = await MySQL.query("DELETE FROM {{name}}s WHERE id=?", [id]);
-    return result.affectedRows > 0;
+  delete: async function(id: string | number) {
+    try {
+      const [result] = await MySQL.query("DELETE FROM {{capitalize name}}s WHERE id=?", [id]);
+      return result.affectedRows > 0;
+    } catch (error) {
+      throw error;  
+    }
   },
 {{else}}
   /**
-   * Creates a new {{name}} object.
-   * @param {any} {{name}} - The {{name}} object to be created.
+   * Creates a new {{capitalize name}} object.
+   * @param {any} {{capitalize name}} - The {{capitalize name}} object to be created.
    */
-  create: async function({{name}}: any) {
-    const result = await MongoDB.insertOne({{name}});
+  create: async function({{capitalize name}}: any) {
+    const result = await MongoDB.insertOne({{capitalize name}});
     return result.insertedId;
   },
   /**
-   * Finds an {{name}} object by its ID.
-   * @param {number} id - The ID of the {{name}} object.
+   * Finds an {{capitalize name}} object by its ID.
+   * @param {number} id - The ID of the {{capitalize name}} object.
    */
   findById: async function(id: any) {
     const result = await MongoDB.findOne({ _id: id });
     return result;
   },
   /**
-   * Finds all {{name}} objects.
+   * Finds all {{capitalize name}} objects.
    */
   findAll: async function () {
     const result = await MongoDB.find({}).toArray();
     return result;
   },
   /**
-   * Updates an {{name}} object.
-   * @param {number} id - The ID of the {{name}} object to be updated.
-   * @param {any} {{name}} - The updated {{name}} object.
+   * Updates an {{capitalize name}} object.
+   * @param {number} id - The ID of the {{capitalize name}} object to be updated.
+   * @param {any} {{capitalize name}} - The updated {{capitalize name}} object.
    */
-  update: async function(id: any, {{name}}: any) {
-    const result = await MongoDB.updateOne({ _id: id }, { $set: {{name}} });
+  update: async function(id: any, {{capitalize name}}: any) {
+    const result = await MongoDB.updateOne({ _id: id }, { $set: {{capitalize name}} });
     return result.modifiedCount > 0;
   },
   /**
-   * Deletes an {{name}} object by its ID.
-   * @param {number} id - The ID of the {{name}} object to be deleted.
+   * Deletes an {{capitalize name}} object by its ID.
+   * @param {number} id - The ID of the {{capitalize name}} object to be deleted.
    */
   delete: async function(id: any) {
     const result = await MongoDB.deleteOne({ _id: id });
