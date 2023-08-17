@@ -144,10 +144,10 @@ export const testMiddleware: IMiddlewareFunction = function (
 Which you can then use in one of your handlers or handler routes, respectively: 
 
 ```typescript
-import { Pigeon } from "pigeon-core";
+import { Pigeon, IPigeonHandler } from "pigeon-core";
 import { testMiddleware } from "../middleware/testMiddleware"
 
-const testHandler = Pigeon.createHandler("/tests", [testMiddleware]);
+const testHandler: IPigeonHandler = Pigeon.createHandler("/tests", [testMiddleware]);
 
 ...
 ```
