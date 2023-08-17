@@ -41,26 +41,12 @@ Pigeon.auth("none");
 //   password: <string>process.env["pigeon.auth.basic.password"],
 // })
 
-// Pigeon.database("mysql", {
-//   host: <string>process.env["pigeon.db.mysql.host"],
-//   user: <string>process.env["pigeon.db.mysql.user"],
-//   password: <string>process.env["pigeon.db.mysql.password"],
-//   database: <string>process.env["pigeon.db.mysql.database"],
-//   port: <string>process.env["pigeon.db.mysql.port"],
-// });
-
-// Pigeon.database("mongodb", {
-//   url: <string>process.env["pigeon.db.mongodb.url"],
-//   db: <string>process.env["pigeon.db.mongodb.db"],
-//   collection: <string>process.env["pigeon.db.mongodb.collection"],
-// });
-
 Pigeon.port(process.env["pigeon.port"] || "2020");
 
 Pigeon.start();
 ```
 
-Where the `auth`, `database` and `port` methods are used to set the current API's authentication method, enable a database and change the default API's port, respectively.
+Where the `auth` and `port` methods are used to set the current API's authentication method and change the default API's port, respectively.
 
 Then the `start` method runs the API with the settings the programmer set (or the default settings if none were set).
 
