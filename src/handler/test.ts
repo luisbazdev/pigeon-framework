@@ -7,13 +7,13 @@
  * handler is for testing purposes only you can remove it anytime.
  */
 import { IncomingMessage, ServerResponse } from "node:http";
-import { Pigeon } from "pigeon-core";
+import { Pigeon, IPigeonHandler } from "pigeon-core";
 /**
  * This handler will catch all requests to "/api/tests/*"
  * please check https://github.com/luisbazdev/pigeon-framework 
  * for more understanding :)
  */
-const testHandler = Pigeon.createHandler("/tests");
+const testHandler: IPigeonHandler = Pigeon.createHandler("/tests");
 
 /**
  * GET method handler for "/api/tests" route.
