@@ -66,9 +66,9 @@ Routing in **Pigeon** is done by creating handlers (via running **plop** command
 This is an example handler that comes by default in Pigeon:
 ```typescript
 import { IncomingMessage, ServerResponse } from "node:http";
-import { Pigeon } from "pigeon-core";
+import { Pigeon, IPigeonHandler } from "pigeon-core";
 
-const testHandler = Pigeon.createHandler("/tests");
+const testHandler: IPigeonHandler = Pigeon.createHandler("/tests");
 
 /**
  * GET method handler for "/api/tests" route.
