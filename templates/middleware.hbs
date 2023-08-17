@@ -3,16 +3,16 @@ import { IMiddlewareFunction } from "pigeon-core";
 
 /**
  * Custom middleware function {{name}}Middleware.
- * @param {IncomingMessage} req - The incoming request object.
- * @param {ServerResponse} res - The server response object.
+ * @param {IncomingMessage} request - The incoming request object.
+ * @param {ServerResponse} response - The server response object.
  * @param {Function} next - The next function to be called.
  *
  * Please check https://github.com/luisbazdev/pigeon-framework 
  * for more understanding :)
  */
 export const {{name}}Middleware: IMiddlewareFunction = function (
-  req: IncomingMessage,
-  res: ServerResponse,
+  request: IncomingMessage,
+  response: ServerResponse,
   next: Function
 ) {
   // Write your middleware here...
