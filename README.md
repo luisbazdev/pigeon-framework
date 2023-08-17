@@ -3,6 +3,7 @@
 - [Overview](#overview)
 - [How to run](#how-to-run)
 - [Routing](#routing)
+- [Repositories](#repositories)
 - [Authentication](#authentication)
 - [Middleware](#middleware)
 - [Database](#database)
@@ -114,6 +115,116 @@ All subsequent requests to `/api/handler-path` will be caught by this handler.
 The handler object contains a few methods which you can use to catch requests that contain specific routes and specific HTTP methods, those methods are `GET`, `POST`, `PUT` and `DELETE`.
 
 Each one of these methods need the programmer to provide a path, a callback function to be executed when the request hits and an optional array of middleware functions.
+
+## Repositories
+
+In Pigeon you can create repositories to separate the business logic from handlers themselves, you can do this by running the `plop` command.
+
+A repository file would look like this:
+
+```typescript
+import { IRepository } from "pigeon-core";
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
+/**
+ * Repository for Test objects.
+ * @type {IRepository}
+ *
+ * Please check https://github.com/luisbazdev/pigeon-framework 
+ * for more understanding :)
+ */
+export const TestRepository: IRepository = {
+  create: async function(Test: any) {
+    try {
+      const result = await prisma.test.create({
+        data: Test
+      });
+      return result;
+    } catch (error) {
+      throw error;  
+    } finally{
+      await prisma.$disconnect();
+    }
+  },
+  findById: async function(id: number) {
+    try {
+      const result = await prisma.test.findUnique({
+        where: {
+          id,
+        },
+      });
+      return result
+    } catch (error) {
+      throw error;  
+    } finally{
+      await prisma.$disconnect();
+    }
+  },
+  findAll: async function () {
+    try {
+      const result = await prisma.test.findMany();
+      return result
+    } catch (error) {
+      throw error;  
+    } finally{
+      await prisma.$disconnect();
+    }
+  },
+  update: async function(id: number, Test: any) {
+    try {
+      const test = await prisma.test.update({
+        data: Test,
+        where: {
+          id,
+        },
+      })
+      return test;
+    } catch (error) {
+      throw error;  
+    } finally{
+      await prisma.$disconnect();
+    }
+  },
+  delete: async function(id: number) {
+    try {
+      const test = await prisma.test.delete({
+        where: {
+          id,
+        },
+      })
+      return test;
+    } catch (error) {
+      throw error;  
+    } finally{
+      await prisma.$disconnect();
+    }
+  },
+};
+```
+
+Which you can then import and use in your handler:
+
+```typescript
+import { IncomingMessage, ServerResponse } from "node:http";
+import { Pigeon, IPigeonHandler } from "pigeon-core";
+import { TestRepository } from "../repository/test";
+
+const testHandler: IPigeonHandler = Pigeon.createHandler("/tests");
+
+/**
+ * GET method handler for "/api/tests" route.
+ * @param {IncomingMessage} request - The incoming request object.
+ * @param {ServerResponse} response - The server response object.
+ */
+testHandler.GET("/", async (request: IncomingMessage, response: ServerResponse) => {
+  // Queries all tests
+  const tests = await TestRepository.findAll();
+  response.json({tests})
+});
+
+...
+```
 
 ## Middleware
 
