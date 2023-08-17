@@ -58,7 +58,7 @@ To begin using `Pigeon` follow these instructions:
 1. Clone this repository `git clone https://github.com/luisbazdev/pigeon-framework.git`
 2. Run `npm install`
 3. (Optional) Add API settings in your .env file
-4. (Optional) Run Prisma database schemas `npm run migrate`
+4. Run Prisma database schemas `npm run migrate`
 5. Start your API by running `npm start`
 
 ## Routing
