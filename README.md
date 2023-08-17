@@ -366,27 +366,71 @@ Pigeon.auth("jwt", <JWTSettings>{
 
 ## Database
 
-Currently in Pigeon there are two databases available to use, which are `MySQL` and `MongoDB` (by default all databases are disabled in your API).
+Pigeon uses [Prisma ORM](https://www.prisma.io/) to perform database queries, creating schemas and migrations. 
 
-This is how you can enable `MySQL` and `MongoDB` databases, respectively:
+The programmer can configure which database and schemas he wants to use in `schema.prisma` file:
+
+```prisma
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("pigeon.db.mysql.url")
+}
+
+model Test {
+  id      Int      @id @default(autoincrement())
+  name    String
+}
+```
+
+The example above specifies that the database to use is `mysql`, `url` is a string of type `mysql://user:password@host:port/database` which specifies the details of the connection, and `Test` is a data schema, read [Prisma documentation](https://www.prisma.io/) for more understanding.
+
+When you create a repository for `Object` you must ensure you create its respective schema in `schema.prisma` file inside `prisma` directory for `Object` (and run the migrations) so that the repository can fetch the data correctly. For example, in the repository shown earlier: 
 
 ```typescript
-import { Pigeon } from "pigeon-core";
+import { IRepository } from "pigeon-core";
+import { PrismaClient } from '@prisma/client'
 
-Pigeon.database("mysql", {
-  host: <string>process.env["pigeon.db.mysql.host"],
-  user: <string>process.env["pigeon.db.mysql.user"],
-  password: <string>process.env["pigeon.db.mysql.password"],
-  database: <string>process.env["pigeon.db.mysql.database"],
-  port: <string>process.env["pigeon.db.mysql.port"],
-});
-```
-```typescript
-import { Pigeon } from "pigeon-core";
+const prisma = new PrismaClient()
+/**
+ * Repository for Test objects.
+ * @type {IRepository}
+ *
+ * Please check https://github.com/luisbazdev/pigeon-framework 
+ * for more understanding :)
+ */
+export const TestRepository: IRepository = {
+  ...
 
-Pigeon.database("mongodb", {
-  url: <string>process.env["pigeon.db.mongodb.url"],
-  db: <string>process.env["pigeon.db.mongodb.db"],
-  collection: <string>process.env["pigeon.db.mongodb.collection"],
-});
+  findAll: async function () {
+    try {
+      const result = await prisma.test.findMany();
+      return result
+    } catch (error) {
+      throw error;  
+    } finally{
+      await prisma.$disconnect();
+    }
+  },
+
+  ...
+};
+
 ```
+
+This `findAll` method queries all `Test` objects (`prisma.test.findMany()`) and then returns the result of the query, if the `Test` object schema does not exist then `prisma.test.findMany()` will not work, therefore you must create its schema in `schema.prisma`, for example:
+
+```prisma
+model Test {
+  id      Int      @id @default(autoincrement())
+  name    String
+}
+```
+
+And then `Test` will be a valid schema to use, which you can query as `prisma.test`. For more information please read [Prisma documentation](https://www.prisma.io/).
