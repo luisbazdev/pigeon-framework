@@ -10,4 +10,22 @@ datasource db {
   url      = env("pigeon.db.mysql.url")
 }
 
+// These models are needed for JWT Authentication
+// Do NOT remove them!
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  roles     UserRole[]
+}
+
+model UserRole {
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  role      String
+
+  @@id([userId, role])
+}
+
 // Create your models here
