@@ -58,7 +58,7 @@ To begin using `Pigeon` follow these instructions:
 1. Clone this repository `git clone https://github.com/luisbazdev/pigeon-framework.git`
 2. Run `npm install`
 3. Add API settings in your .env file
-4. Run `npm run migrate` (Make sure to add correct database settings in your `.env` file, see `Database` section)
+4. Run `npm run migrate` (make sure your database is running and add database settings in your `.env` file, see `Database` section)
 5. Start your API by running `npm start`
 
 ## Routing
@@ -415,7 +415,7 @@ model Test {
 }
 ```
 
-The example above specifies that the database to use is `mysql`, `url` is a string of type `mysql://user:password@host:port/database` which specifies the details of the connection, and `Test` is a data schema, read [Prisma documentation](https://www.prisma.io/) for more understanding.
+The example above specifies that the database to use is `mysql` and `url` is a string of type `mysql://user:password@host:port/database` which specifies the details of the connection (please make sure your database is running correctly), and `Test` is a data schema, read [Prisma documentation](https://www.prisma.io/) for more understanding.
 
 When you create a repository for `Object` you must ensure you create its respective schema in `schema.prisma` file inside `prisma` directory for `Object` (and run the migrations) so that the repository can fetch the data correctly. For example, in the repository shown earlier: 
 
