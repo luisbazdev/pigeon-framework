@@ -329,9 +329,12 @@ In Pigeon you can also specify to use `JWT Authentication routes` which are rout
 
 Here's an example of how you can set up `JWT Authentication` in Pigeon:
 
-The programmer needs to provide a `secret` and optional `routes` for authentication purposes in your `.env` file like this:
+Please pay attention to the `pigeon.auth.jwt.global` environment variable, as setting it to true will secure every handler there is in the API, if it is set to false, it will not secure any handler by default and the programmer will have to set `JWTAuthentication` middleware wherever they want to use `JWT Authentication`! 
+
+The programmer needs to provide a `global`, `secret` and optional `routes` variables for authentication purposes in your `.env` file like this:
 
 ```typescript
+pigeon.auth.jwt.global=true
 pigeon.auth.jwt.privatekey=secret
 pigeon.auth.jwt.routes.enabled=true
 pigeon.auth.jwt.routes.login=/login
