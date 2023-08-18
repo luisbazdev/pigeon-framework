@@ -12,7 +12,7 @@ const prisma = new PrismaClient()
 export const {{capitalize name}}Repository: IRepository = {
   /**
    * Creates a new task.
-   * @param {any} Task - The task data.
+   * @param {any} {{capitalize name}} - The task data.
    */
   create: async function({{capitalize name}}: any) {
     try {
@@ -60,7 +60,7 @@ export const {{capitalize name}}Repository: IRepository = {
   /**
    * Updates a task by its ID.
    * @param {number} id - The task ID.
-   * @param {any} Task - The updated task data.
+   * @param {any} {{capitalize name}} - The updated task data.
    */
   update: async function(id: number, {{capitalize name}}: any) {
     try {
