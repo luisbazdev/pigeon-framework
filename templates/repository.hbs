@@ -10,6 +10,10 @@ const prisma = new PrismaClient()
  * for more understanding :)
  */
 export const {{capitalize name}}Repository: IRepository = {
+  /**
+   * Creates a new task.
+   * @param {any} Task - The task data.
+   */
   create: async function({{capitalize name}}: any) {
     try {
       const result = await prisma.{{name}}.create({
@@ -22,6 +26,10 @@ export const {{capitalize name}}Repository: IRepository = {
       await prisma.$disconnect();
     }
   },
+  /**
+   * Finds a task by its ID.
+   * @param {number} id - The task ID.
+   */
   findById: async function(id: number) {
     try {
       const result = await prisma.{{name}}.findUnique({
@@ -36,6 +44,9 @@ export const {{capitalize name}}Repository: IRepository = {
       await prisma.$disconnect();
     }
   },
+  /**
+   * Finds all tasks.
+   */
   findAll: async function () {
     try {
       const result = await prisma.{{name}}.findMany();
@@ -46,6 +57,11 @@ export const {{capitalize name}}Repository: IRepository = {
       await prisma.$disconnect();
     }
   },
+  /**
+   * Updates a task by its ID.
+   * @param {number} id - The task ID.
+   * @param {any} Task - The updated task data.
+   */
   update: async function(id: number, {{capitalize name}}: any) {
     try {
       const {{name}} = await prisma.{{name}}.update({
@@ -61,6 +77,10 @@ export const {{capitalize name}}Repository: IRepository = {
       await prisma.$disconnect();
     }
   },
+  /**
+   * Deletes a task by its ID.
+   * @param {number} id - The task ID.
+   */
   delete: async function(id: number) {
     try {
       const {{name}} = await prisma.{{name}}.delete({
