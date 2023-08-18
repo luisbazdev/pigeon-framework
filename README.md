@@ -128,11 +128,11 @@ The callback function provided by the programmer has two parameters, `request` a
 * `user` - The identity of the currently logged in user (in case there is any)
 
 ### Response
-* `download(filePath)` - Sends the client the file located at `filePath` to download
+* `download(filePath)` - Sends the client the file located at `filePath` (relative to `static` folder) to download 
 * `redirect(to)` - Redirects the current response to `to`
-* `set(header, value)` - Sets the value of header in the response;
-* `send(value)` - Sends a response;
-* `sendFile(filePath)` - Sends a file located in `filePath`
+* `set(header, value)` - Sets the value of header in the response
+* `send(value)` - Sends a plain response or converts it to JSON if value is an object
+* `sendFile(filePath)` - Sends a file located in `filePath` (relative to `static` folder)
 * `json(val)` - Send a JSON object as a response
 * `status(status)` - Sets the status code of the response
 * `cookie(name, value, options)` - Creates a new cookie in the response with the options the programmer specifies 
@@ -297,13 +297,13 @@ testHandler.GET("/", async (request: IncomingMessage, response: ServerResponse) 
 ...
 ```
 
-At some point of the execution of a middleware function it must terminate and pass control to the next middleware function in the **middleware cycle**, which is done by calling `next()` function, if the programmer does not call `next()` the request will be left hanging because the rest of the middlewares will not be executed (remember the actual callback that will intercept the request is also treated as a middleware).
+At some point of the execution of a middleware function it must terminate and pass control to the next middleware function in the `middleware cycle`, which is done by calling `next()` function, if the programmer does not call `next()` the request will be left hanging because the rest of the middlewares will not be executed (remember the actual callback that will intercept the request is also treated as a middleware).
 
 All functions that will be executed after an HTTP request hits the server are treated as `middlewares` (including the actual callback of a handler route), the order of middleware execution goes as: `general middleware`, `handler middleware`, `route middleware` and `callback functions`.
 
 ### General middleware
 
-First, the `general middleware` is executed, these are the first global middleware functions that get added your API, for example, when you have set any type of `authentication method` in your API, be it either `basic` or `jwt`, the respective middleware to authenticate requests based on that method is added for all handlers in your API.
+First, the `general middleware` is executed, these are the first global middleware functions that get added your API, for example, when you have set any type of `authentication method` in your API, be it either `basic` or `jwt`, the respective middleware to authenticate requests based on that method is added for all handlers in your API (in case of `JWT`, `JWTAuthentication` middleware only gets added if `pigeon.auth.jwt.global` variable is equal to `true`).
 
 ### Handler middleware
 
@@ -323,9 +323,9 @@ Pigeon currently support two different methods of authentication which are `HTTP
 
 ### HTTP Basic Authentication
 
-[HTTP Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) type works by storing a username and password in the server which then the user will have to send in the Authorization HTTP header and be compared against the credentials you specified.
+[HTTP Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) type works by storing a username and password in the server which then the user will have to send in the `Authorization` HTTP header and be compared against the credentials you specified.
 
-To use `HTTP Basic Authentication` you need to set the authentication provide a user and password in your `.env` file like this:
+To use `HTTP Basic Authentication` you need to provide a user and password in your `.env` file like this:
 
 ```typescript
 pigeon.auth.basic.user=username
@@ -347,7 +347,7 @@ Pigeon.auth("basic", <HTTPBasicSettings>{
 
 [JWT Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) type works by storing a secret key which will be used to sign and verify [JWT Tokens](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) that clients will send in the Authorization header.
 
-In Pigeon you can also specify to use `JWT Authentication routes` which are routes where the client can: log-in and receive a `JWT Token`, sign-up, and log-out and invalidate its current `JWT Token`, respectively.
+In Pigeon you can also specify to use `JWT Authentication routes` which are routes where the client can: log-in and receive a `JWT Token`, sign-up, and log-out, respectively.
 
 Here's an example of how you can set up `JWT Authentication` in Pigeon:
 
