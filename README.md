@@ -117,6 +117,28 @@ The handler object contains a few methods which you can use to catch requests th
 
 Each one of these methods need the programmer to provide a path, a callback function to be executed when the request hits and an optional array of middleware functions.
 
+The callback function provided by the programmer has two parameters, `request` and `response`, both which has custom methods and objects for you to use in your handlers:
+
+### request
+* `get(header)` - Returns the value of the header the programmer specifies
+* `body` - Request body sent by the client
+* `cookies` - Cookies sent in the request by the client
+* `query` - Query parameters in the URL sent by the client
+* `params` - Custom parameters in the URL sent by the client
+* `user` - The identity of the currently logged in user (in case there is any)
+
+### Response
+* `download(filePath)` - Sends the client the file located at `filePath` to download
+* `redirect(to)` - Redirects the current response to `to`
+* `set(header, value)` - Sets the value of header in the response;
+* `send(value)` - Sends a response;
+* `sendFile(filePath)` - Sends a file located in `filePath`
+* `json(val)` - Send a JSON object as a response
+* `status(status)` - Sets the status code of the response
+* `cookie(name, value, options)` - Creates a new cookie in the response with the options the programmer specifies 
+
+Since Pigeon adds all these custom methods to both `IncomingMessage` and `ServerResponse` interfaces, request and response will have all the methods of the interfaces previously mentioned, respectively, see [IncomingMessage](https://nodejs.org/dist/latest-v18.x/docs/api/http.html#class-httpincomingmessage) and [ServerResponse](https://nodejs.org/dist/latest-v18.x/docs/api/http.html#class-httpserverresponse) for more understanding.
+
 ## Repositories
 
 In Pigeon you can create repositories to separate the business logic from handlers themselves, you can do this by running the `plop` command.
