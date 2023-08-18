@@ -11,8 +11,8 @@ const prisma = new PrismaClient()
  */
 export const {{capitalize name}}Repository: IRepository = {
   /**
-   * Creates a new task.
-   * @param {any} {{capitalize name}} - The task data.
+   * Creates a new {{name}}.
+   * @param {any} {{capitalize name}} - The {{name}} data.
    */
   create: async function({{capitalize name}}: any) {
     try {
@@ -27,8 +27,8 @@ export const {{capitalize name}}Repository: IRepository = {
     }
   },
   /**
-   * Finds a task by its ID.
-   * @param {number} id - The task ID.
+   * Finds a {{name}} by its ID.
+   * @param {number} id - The {{name}} ID.
    */
   findById: async function(id: number) {
     try {
@@ -45,7 +45,7 @@ export const {{capitalize name}}Repository: IRepository = {
     }
   },
   /**
-   * Finds all tasks.
+   * Finds all {{name}}s.
    */
   findAll: async function () {
     try {
@@ -58,9 +58,9 @@ export const {{capitalize name}}Repository: IRepository = {
     }
   },
   /**
-   * Updates a task by its ID.
-   * @param {number} id - The task ID.
-   * @param {any} {{capitalize name}} - The updated task data.
+   * Updates a {{name}} by its ID.
+   * @param {number} id - The {{name}} ID.
+   * @param {any} {{capitalize name}} - The updated {{name}} data.
    */
   update: async function(id: number, {{capitalize name}}: any) {
     try {
@@ -78,8 +78,8 @@ export const {{capitalize name}}Repository: IRepository = {
     }
   },
   /**
-   * Deletes a task by its ID.
-   * @param {number} id - The task ID.
+   * Deletes a {{name}} by its ID.
+   * @param {number} id - The {{name}} ID.
    */
   delete: async function(id: number) {
     try {
