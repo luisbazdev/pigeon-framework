@@ -10,7 +10,7 @@
 
 ## Overview
 
-Pigeon is a backend framework for creating **Application Programming Interfaces** inspired mainly by [Express.js framework](https://expressjs.com/) and created by Luis Barraza (luisbazdev). It supports routing, authentication, middleware, and databases. 
+Pigeon is a backend framework for creating **Application Programming Interfaces** inspired mainly by [Express.js framework](https://expressjs.com/) and created by Luis Barraza (luisbazdev) for learning purposes. It supports routing, authentication, middleware, and databases. 
 
 The programmer can modify their API's settings in `index.ts` entry file by calling methods on the `Pigeon` object, this is the default `index.ts` file: 
 
@@ -57,8 +57,8 @@ To begin using `Pigeon` follow these instructions:
 
 1. Clone this repository `git clone https://github.com/luisbazdev/pigeon-framework.git`
 2. Run `npm install`
-3. (Optional) Add API settings in your .env file
-4. Run Prisma database schemas `npm run migrate`
+3. Add API settings in your .env file
+4. Run `npm run migrate` (Make sure to add correct database settings in your `.env` file, see `Database` section)
 5. Start your API by running `npm start`
 
 ## Routing
