@@ -10,7 +10,7 @@
 
 ## Overview
 
-Pigeon is a backend framework for creating **Application Programming Interfaces** inspired mainly by [Express.js framework](https://expressjs.com/) and created by Luis Barraza (luisbazdev) for learning purposes. It supports routing, authentication, middleware, and databases. 
+Pigeon is a backend framework for creating **Application Programming Interfaces** inspired mainly by [Express.js framework](https://expressjs.com/) and created by Luis Barraza (luisbazdev) for learning purposes. It supports routing, authentication, middleware, and databases. Click [here](https://github.com/luisbazdev/pigeon-example-api) to see an example API created with Pigeon :).
 
 The programmer can modify their API's settings in `index.ts` entry file by calling methods on the `Pigeon` object, this is the default `index.ts` file: 
 
