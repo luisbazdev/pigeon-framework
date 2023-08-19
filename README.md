@@ -55,6 +55,7 @@ Pigeon.start();
    * [HTTP Basic Authentication](#http-basic-authentication)
    * [JWT Authentication](#jwt-authentication)
 * [Database](#database)
+* [How to run](#how-to-run)
 * [API](#api)
    * [Pigeon](#pigeon)
    * [Request](#request)
