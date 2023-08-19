@@ -508,7 +508,7 @@ For more information please read [Prisma documentation](https://www.prisma.io/).
 
 1. Clone this repository `git clone https://github.com/luisbazdev/pigeon-framework.git`
 2. Run `npm install`
-3. Add API settings in your .env file
+3. Add API settings in your `.env` file
 4. Create your API
 5. Run `npm run migrate` (very important, make sure your database is running and you added database settings in your `.env` file, see [Database](#database))
 6. Start your API by running `npm start`
