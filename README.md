@@ -1,20 +1,15 @@
 # Pigeon Framework
 
-- [Overview](#overview)
-- [How to run](#how-to-run)
-- [Routing](#routing)
-- [Repositories](#repositories)
-- [Authentication](#authentication)
-- [Middleware](#middleware)
-- [Database](#database)
+## Introduction
 
-## Overview
+Pigeon is a backend framework for creating `Application Programming Interfaces` inspired mainly by [Express.js framework](https://expressjs.com/) and created by Luis Barraza for learning purposes. It supports `routing`, `authentication`, `middleware`, and `databases`. Click [here](https://github.com/luisbazdev/pigeon-example-api) to see an example API created with Pigeon.
 
-Pigeon is a backend framework for creating **Application Programming Interfaces** inspired mainly by [Express.js framework](https://expressjs.com/) and created by Luis Barraza (luisbazdev) for learning purposes. It supports routing, authentication, middleware, and databases. Click [here](https://github.com/luisbazdev/pigeon-example-api) to see an example API created with Pigeon :).
+The heart of Pigeon is located in the main `index.ts` file, this is where you can modify your API settings.
 
-The programmer can modify their API's settings in `index.ts` entry file by calling methods on the `Pigeon` object, this is the default `index.ts` file: 
 
 ```typescript
+// index.ts
+
 import dotenv from "dotenv";
 import { Pigeon, HTTPBasicSettings, JWTSettings } from "pigeon-core";
 dotenv.config();
@@ -47,26 +42,32 @@ Pigeon.port(process.env["pigeon.port"] || "2020");
 Pigeon.start();
 ```
 
-Where the `auth` and `port` methods are used to set the current API's authentication method and change the default API's port, respectively.
+## Table of Contents
 
-Then the `start` method runs the API with the settings the programmer set (or the default settings if none were set).
+* [Handlers](#handlers)
+* [Repositories](#repositories)
+* [Middleware](#middleware)
+   * [General middleware](#general-middleware)
+   * [Handler middleware](#handler-middleware)
+   * [Route middleware](#route-middleware)
+   * [Callback functions](#callback-functions)
+* [Authentication](#authentication)
+   * [HTTP Basic Authentication](#http-basic-authentication)
+   * [JWT Authentication](#jwt-authentication)
+* [Database](#database)
+* [API](#api)
+   * [Pigeon](#pigeon)
+   * [Request](#request)
+   * [Response](#response)
 
-## How to run
+## Handlers
 
-To begin using `Pigeon` follow these instructions:
+Routing in Pigeon is done by using `handlers` (you can create them by running `plop` or you can create them manually).
 
-1. Clone this repository `git clone https://github.com/luisbazdev/pigeon-framework.git`
-2. Run `npm install`
-3. Add API settings in your .env file
-4. Run `npm run migrate` (make sure your database is running and add database settings in your `.env` file, see `Database` section)
-5. Start your API by running `npm start`
-
-## Routing
-
-Routing in **Pigeon** is done by creating handlers (via running **plop** command or creating them manually).
-
-This is an example handler that comes by default in Pigeon:
+This is an example `handler` that comes by default in Pigeon:
 ```typescript
+// test.ts
+
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Pigeon, IPigeonHandler } from "pigeon-core";
 
@@ -109,43 +110,35 @@ testHandler.DELETE("/", async (request: IncomingMessage, response: ServerRespons
 });
 ```
 
-You create the handler by calling the `createHandler` method of the `Pigeon` object and specifying a handler path and an optional array of middleware functions.
-
-All subsequent requests to `/api/handler-path` will be caught by this handler.
-
-The handler object contains a few methods which you can use to catch requests that contain specific routes and specific HTTP methods, those methods are `GET`, `POST`, `PUT` and `DELETE`.
-
-Each one of these methods need the programmer to provide a path, a callback function to be executed when the request hits and an optional array of middleware functions.
-
-The callback function provided by the programmer has two parameters, `request` and `response`, both which has custom methods and objects for you to use in your handlers:
-
-### request
-* `get(header)` - Returns the value of the header the programmer specifies
-* `body` - Request body sent by the client
-* `cookies` - Cookies sent in the request by the client
-* `query` - Query parameters in the URL sent by the client
-* `params` - Custom parameters in the URL sent by the client
-* `user` - The identity of the currently logged in user (in case there is any)
-
-### Response
-* `download(filePath)` - Sends the client the file located at `filePath` (relative to `static` folder) to download 
-* `redirect(to)` - Redirects the current response to `to`
-* `set(header, value)` - Sets the value of header in the response
-* `send(value)` - Sends a plain response or converts it to JSON if value is an object
-* `sendFile(filePath)` - Sends a file located in `filePath` (relative to `static` folder)
-* `json(val)` - Send a JSON object as a response
-* `status(status)` - Sets the status code of the response
-* `cookie(name, value, options)` - Creates a new cookie in the response with the options the programmer specifies 
-
-Since Pigeon adds all these custom methods to both `IncomingMessage` and `ServerResponse` interfaces, request and response will have all the methods of the interfaces previously mentioned, respectively, see [IncomingMessage](https://nodejs.org/dist/latest-v18.x/docs/api/http.html#class-httpincomingmessage) and [ServerResponse](https://nodejs.org/dist/latest-v18.x/docs/api/http.html#class-httpserverresponse) for more understanding.
-
-## Repositories
-
-In Pigeon you can create repositories to separate the business logic from handlers themselves, you can do this by running the `plop` command.
-
-A repository file would look like this:
+You can create a handler by calling the `createHandler` method of the `Pigeon` object, which will create a handler that catches requests to a certain path and return that handler:
 
 ```typescript
+// Creates a handler that catches requests to "/api/tests/*"
+const testHandler: IPigeonHandler = Pigeon.createHandler("/tests");
+```
+
+Now you can create routes inside `/api/tests` path:
+
+```typescript
+// Catches all GET requests to "/api/tests"
+testHandler.GET("/", async (request: IncomingMessage, response: ServerResponse) => {
+  response.end("Hello Pigeon GET!");
+});
+// Catches all POST requests to "/api/tests"
+testHandler.POST("/", async (request: IncomingMessage, response: ServerResponse) => {
+  response.end("Hello Pigeon POST!");
+});
+```
+
+## Repositories 
+
+In Pigeon you can create `repositories` to separate business logic from your `handlers` by running `plop` or creating them manually.
+
+This is an example `repository`:
+
+```typescript
+// test.ts
+
 import { IRepository } from "pigeon-core";
 import { PrismaClient } from '@prisma/client'
 
@@ -158,6 +151,10 @@ const prisma = new PrismaClient()
  * for more understanding :)
  */
 export const TestRepository: IRepository = {
+  /**
+   * Creates a new test.
+   * @param {any} Test - The test data.
+   */
   create: async function(Test: any) {
     try {
       const result = await prisma.test.create({
@@ -170,6 +167,10 @@ export const TestRepository: IRepository = {
       await prisma.$disconnect();
     }
   },
+  /**
+   * Finds a test by its ID.
+   * @param {number} id - The test ID.
+   */
   findById: async function(id: number) {
     try {
       const result = await prisma.test.findUnique({
@@ -184,6 +185,9 @@ export const TestRepository: IRepository = {
       await prisma.$disconnect();
     }
   },
+  /**
+   * Finds all tests.
+   */
   findAll: async function () {
     try {
       const result = await prisma.test.findMany();
@@ -194,6 +198,11 @@ export const TestRepository: IRepository = {
       await prisma.$disconnect();
     }
   },
+  /**
+   * Updates a test by its ID.
+   * @param {number} id - The test ID.
+   * @param {any} Test - The updated test data.
+   */
   update: async function(id: number, Test: any) {
     try {
       const test = await prisma.test.update({
@@ -209,6 +218,10 @@ export const TestRepository: IRepository = {
       await prisma.$disconnect();
     }
   },
+  /**
+   * Deletes a test by its ID.
+   * @param {number} id - The test ID.
+   */
   delete: async function(id: number) {
     try {
       const test = await prisma.test.delete({
@@ -226,11 +239,12 @@ export const TestRepository: IRepository = {
 };
 ```
 
-Which you can then import and use in your handler:
+Which you can then use in your `handler` to perform database queries:
 
 ```typescript
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Pigeon, IPigeonHandler } from "pigeon-core";
+// Import the repository
 import { TestRepository } from "../repository/test";
 
 const testHandler: IPigeonHandler = Pigeon.createHandler("/tests");
@@ -251,9 +265,9 @@ testHandler.GET("/", async (request: IncomingMessage, response: ServerResponse) 
 
 ## Middleware
 
-Middleware functions intercept the current HTTP request to perfome some actions before the actual request gets sent a response, you can create them by running `plop` or creating them manually.
+Middleware functions intercept the current HTTP request to perfome some actions before the actual request gets sent a response, you can create them by running `plop` or you can create them manually.
 
-This is an example of a test middleware function in Pigeon: 
+This is an example of a `middleware` that comes by default in Pigeon: 
 
 ```typescript
 import { IncomingMessage, ServerResponse } from "node:http";
@@ -275,12 +289,13 @@ export const testMiddleware: IMiddlewareFunction = function (
 };
 ```
 
-Which you can then use in one of your handlers or handler routes, respectively: 
+Which you can then use globally in your `handler` or on specific `handler routes`, respectively:
 
 ```typescript
 import { Pigeon, IPigeonHandler } from "pigeon-core";
+// Import the middleware
 import { testMiddleware } from "../middleware/testMiddleware"
-
+// Add the middleware to the handler middleware array
 const testHandler: IPigeonHandler = Pigeon.createHandler("/tests", [testMiddleware]);
 
 ...
@@ -288,7 +303,7 @@ const testHandler: IPigeonHandler = Pigeon.createHandler("/tests", [testMiddlewa
 
 ```typescript
 ...
-
+// Add the middleware to the handler route middleware array
 testHandler.GET("/", async (request: IncomingMessage, response: ServerResponse) => {
   // ...
   response.end()
@@ -297,25 +312,25 @@ testHandler.GET("/", async (request: IncomingMessage, response: ServerResponse) 
 ...
 ```
 
-At some point of the execution of a middleware function it must terminate and pass control to the next middleware function in the `middleware cycle`, which is done by calling `next()` function, if the programmer does not call `next()` the request will be left hanging because the rest of the middlewares will not be executed (remember the actual callback that will intercept the request is also treated as a middleware).
+At some point of the execution of a `middleware` function, it must terminate and pass control to the next `middleware` function in the `middleware cycle`, which is done by calling `next()` function, if you do not call `next()` the request will be left hanging because the rest of the `middlewares` will not be executed (keep in mind the actual callback of a `handler route` is also treated as a `middleware`).
 
-All functions that will be executed after an HTTP request hits the server are treated as `middlewares` (including the actual callback of a handler route), the order of middleware execution goes as: `general middleware`, `handler middleware`, `route middleware` and `callback functions`.
+All functions that get executed when an HTTP request hits the server are treated as `middlewares` (including the actual callback of a `handler route`), the order of middleware execution goes like: `general middleware`, `handler middleware`, `route middleware` and `callback functions`.
 
 ### General middleware
 
-First, the `general middleware` is executed, these are the first global middleware functions that get added your API, for example, when you have set any type of `authentication method` in your API, be it either `basic` or `jwt`, the respective middleware to authenticate requests based on that method is added for all handlers in your API (in case of `JWT`, `JWTAuthentication` middleware only gets added if `pigeon.auth.jwt.global` variable is equal to `true`).
+These are the global middleware functions that get added your API, for example, when you set any type of `authentication method` in your API, be it either `basic` or `jwt`, the respective middleware to authenticate requests based on that method is added for all `handlers` in your API (in case of `JWT`, `JWTAuthentication` middleware only gets added if `pigeon.auth.jwt.global` variable is equal to `true`).
 
 ### Handler middleware
 
-These are the middleware that get executed before any route of a specific router.
+These are the `middleware` that get executed before any `handler route` of a specific `handler`.
 
 ### Route middleware
 
-These are the middleware that get executed in a specific route(s) of a specific router.
+These are the `middleware` that get executed before a specific `handler route` of a specific `handler`.
 
 ### Callback functions
 
-These are the actual functions you provided for any specific route in your handler, this is where the response gets sent.
+These are the actual `callback functions` that were provided for any specific `handler route` in a `handler`.
 
 ## Authentication
 
@@ -332,7 +347,7 @@ pigeon.auth.basic.user=username
 pigeon.auth.basic.password=password
 ```
 
-And then set the authentication type to `basic` like this:
+And then set the `authentication method` to `basic` like this:
 
 ```typescript
 import { Pigeon, HTTPBasicSettings } from "pigeon-core";
@@ -343,17 +358,14 @@ Pigeon.auth("basic", <HTTPBasicSettings>{
 })
 ```
 
+
 ### JWT Authentication
 
-[JWT Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) type works by storing a secret key which will be used to sign and verify [JWT Tokens](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) that clients will send in the Authorization header.
+[JWT Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) type works by storing a secret key which will be used to sign and verify [JWT Tokens](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) that clients will send in the request.
 
-In Pigeon you can also specify to use `JWT Authentication routes` which are routes where the client can: log-in and receive a `JWT Token`, sign-up, and log-out, respectively.
+In Pigeon you can also specify to use `JWT Authentication routes` which are routes where the client can: log-in and receive a `JWT Token` or sign-up with `email` and `password`, respectively.
 
-Here's an example of how you can set up `JWT Authentication` in Pigeon:
-
-Please pay attention to the `pigeon.auth.jwt.global` environment variable, as setting it to true will secure every handler there is in the API, if it is set to false, it will not secure any handler by default and the programmer will have to set `JWTAuthentication` middleware wherever they want to use `JWT Authentication`! 
-
-The programmer needs to provide a `global`, `secret` and optional `routes` variables for authentication purposes in your `.env` file like this:
+Here's an example of how you can set up `JWT Authentication` in Pigeon, you need to provide a `global`, `secret` and an optional `routes` variables in your `.env` file like this:
 
 ```typescript
 pigeon.auth.jwt.global=true
@@ -364,29 +376,32 @@ pigeon.auth.jwt.routes.signup=/signup
 pigeon.auth.jwt.routes.logout=/logout
 ```
 
-And then set the authentication type to `jwt` like this:
+Please pay attention to the `pigeon.auth.jwt.global` environment variable, as setting it to true will secure every `handler` there is in the API, else it will not secure any `handler` by default and you will have to set `JWTAuthentication middleware` wherever you want to use `JWT Authentication`! 
+
+And then set the `authentication method` to `jwt` like this:
 
 ```typescript
 import { Pigeon, JWTSettings } from "pigeon-core";
 
 Pigeon.auth("jwt", <JWTSettings>{
-    privateKey: <string>process.env["pigeon.auth.jwt.privatekey"],
-    routes: {
-      enabled: <string>process.env["pigeon.auth.jwt.routes.enabled"],
-      login: <string>process.env["pigeon.auth.jwt.routes.login"],
-      signup: <string>process.env["pigeon.auth.jwt.routes.signup"],
-      logout: <string>process.env["pigeon.auth.jwt.routes.logout"],
-    },
+  global: <string>process.env["pigeon.auth.jwt.global"],
+  privateKey: <string>process.env["pigeon.auth.jwt.privatekey"],
+  routes: {
+    enabled: <string>process.env["pigeon.auth.jwt.routes.enabled"],
+    login: <string>process.env["pigeon.auth.jwt.routes.login"],
+    signup: <string>process.env["pigeon.auth.jwt.routes.signup"],
+    logout: <string>process.env["pigeon.auth.jwt.routes.logout"],
+  },
 });
 ```
 
-The programmer might also choose to not enable `JWT Authentication routes` and just secure the API by verifying the client's `JWT Token`, here is how you can do it: 
+You might also choose to not enable `JWT Authentication routes` and just secure the API by verifying the client's `JWT Token`, here is how you can do it: 
 
 ```typescript
 import { Pigeon, JWTSettings } from "pigeon-core";
 
 Pigeon.auth("jwt", <JWTSettings>{
-    privateKey: <string>process.env["pigeon.auth.jwt.privatekey"],
+  privateKey: <string>process.env["pigeon.auth.jwt.privatekey"],
 });
 ```
 
@@ -394,7 +409,7 @@ Pigeon.auth("jwt", <JWTSettings>{
 
 Pigeon uses [Prisma ORM](https://www.prisma.io/) to perform database queries, creating schemas and migrations. 
 
-The programmer can configure which database and schemas he wants to use in `schema.prisma` file:
+You can configure which `database` and `models` you want to use in your API by modifying the `schema.prisma` file:
 
 ```prisma
 // This is your Prisma schema file,
@@ -409,15 +424,36 @@ datasource db {
   url      = env("pigeon.db.mysql.url")
 }
 
+// These models are needed for JWT Authentication
+// Do NOT remove them!
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  roles     UserRole[]
+}
+
+model UserRole {
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  role      String
+
+  @@id([userId, role])
+}
+
+// Create your models here
 model Test {
-  id      Int      @id @default(autoincrement())
-  name    String
+  id   Int    @id @default(autoincrement())
+  name String
 }
 ```
 
-The example above specifies that the database to use is `mysql` and `url` is a string of type `mysql://user:password@host:port/database` which specifies the details of the connection (please make sure your database is running correctly), and `Test` is a data schema, read [Prisma documentation](https://www.prisma.io/) for more understanding.
+The example above specifies that the database to use is `mysql` and the credentials for setting the connection are stored in `pigeon.db.mysql.url` environment variable.
 
-When you create a repository for `Object` you must ensure you create its respective schema in `schema.prisma` file inside `prisma` directory for `Object` (and run the migrations) so that the repository can fetch the data correctly. For example, in the repository shown earlier: 
+In the case of `mysql`, `url` is a string of type `mysql://user:password@host:port/database` (please make sure your database is running correctly so prisma can create a connection), and `Test` is a model, read [Prisma documentation](https://www.prisma.io/) for more understanding.
+
+When you create a repository for an `Object` you must ensure you create its respective model in `schema.prisma` (and run the migrations after, this is important) so that the repository can fetch the data correctly. For example, in the repository shown earlier: 
 
 ```typescript
 import { IRepository } from "pigeon-core";
@@ -434,6 +470,10 @@ const prisma = new PrismaClient()
 export const TestRepository: IRepository = {
   ...
 
+  /**
+   * Creates a new test.
+   * @param {any} Test - The test data.
+   */
   findAll: async function () {
     try {
       const result = await prisma.test.findMany();
@@ -450,13 +490,90 @@ export const TestRepository: IRepository = {
 
 ```
 
-This `findAll` method queries all `Test` objects (`prisma.test.findMany()`) and then returns the result of the query, if the `Test` object schema does not exist then `prisma.test.findMany()` will not work, therefore you must create its schema in `schema.prisma`, for example:
+This `findAll` method queries all `Test` (`prisma.test.findMany()`) and then returns the result of the query, if the `Test` model does not exist (you did not create the model or did not perform the migrations) then `prisma.test.findMany()` will not work, so make sure you create its model:
 
 ```prisma
+// schema.prisma
+
 model Test {
   id      Int      @id @default(autoincrement())
   name    String
 }
 ```
 
-And then `Test` will be a valid schema to use, which you can query as `prisma.test`. For more information please read [Prisma documentation](https://www.prisma.io/).
+For more information please read [Prisma documentation](https://www.prisma.io/).
+
+## How to run
+
+1. Clone this repository `git clone https://github.com/luisbazdev/pigeon-framework.git`
+2. Run `npm install`
+3. Add API settings in your .env file
+4. Create your API
+5. Run `npm run migrate` (very important, make sure your database is running and you added database settings in your `.env` file, see [Database](#database))
+6. Start your API by running `npm start`
+
+## API
+
+## Pigeon
+
+### Methods
+
+| Method | Description |
+|--------|-------------|
+| `createHandler(path: string, [middleware]: IMiddlewareFunction): IPigeonHandler` | Creates a new Pigeon Handler. |
+| `auth(type: AuthType, [settings]: JWTSettings | HTTPBasicSettings): void` | Sets the type of authentication to use in the API. |
+| `port(port: string | number): void` | Sets the port number on which the HTTP server will listen. |
+| `start(): void` | Starts the API. |
+
+#### `createHandler(path: string, [middleware]: IMiddlewareFunction): RequestHandler`
+
+Creates a new Pigeon `handler`.
+
+- `path`: The handler path.
+
+- `middleware` (optional): Optional array of handler middleware.
+
+#### `auth(type: AuthType, [settings]: JWTSettings | HTTPBasicSettings): void`
+
+Sets the type of authentication to use in the API.
+
+- `type`: The type of authentication to use.
+
+- `settings` (optional): Optional authentication settings object.
+
+#### `port(port: string | number): void`
+
+Sets the port number on which the HTTP server will listen.
+
+- `port`: The port number to be set.
+
+#### `start(): void`
+
+Starts the API.
+
+## Request
+
+### Properties
+
+| Property | Description |
+|----------|-------------|
+| `body` | The request body. |
+| `cookies` | Cookies sent in the request. |
+| `query` | Query parameters from the URL. |
+| `params` | Dynamic parameters from the URL. |
+| `user` | The currently logged in user. |
+
+## Response
+
+### Methods
+
+| Method | Description |
+|--------|-------------|
+| `download(filePath: string): void` | Sends a file for the client to download, `filePath` is relative to `/src/static` directory. |
+| `redirect(to: string): void` | Redirects the request to `to`. |
+| `set(header: string, value: string): this` | Sets the value of `header` to `value`. |
+| `send(value: any): void` | Sends a text response to the client, if `value` is an `object`, it will act as using `json()` method. |
+| `sendFile(filePath: string): void` | Sends a file to the client. `filePath` is relative to `/src/static` directory. |
+| `json(value: any): void` | Sends a JSON response to the client. |
+| `status(code: number): this` | Sets the status code of the response to `code`. |
+| `cookie(name: string, value: string, options: object): this` | Sets cookie `name` to `value` using `options`. |
