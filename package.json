@@ -25,7 +25,7 @@
     "@types/dotenv": "^8.2.0",
     "dotenv": "^16.3.1",
     "mysql2": "^3.6.0",
-    "pigeon-core": "^2.2.4",
+    "pigeon-core": "^2.3.1",
     "rimraf": "^5.0.1"
   }
 }
